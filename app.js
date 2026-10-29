@@ -43,6 +43,24 @@ app.get('/greet', (req, res) => {
     </html>
   `);
 });
+
+// 3. Code Injection (CWE-95) Test Case
+// CodeQL should flag this: Untrusted 'req.query.expr' flows into 'eval'
+app.get('/evaluate', (req, res) => {
+  const expr = req.query.expr;
+ 
+  if (!expr) {
+    return res.status(400).send('Missing expr parameter');
+  }
+ 
+  // VULNERABILITY: Untrusted input passed directly to eval() without sanitization or validation
+  try {
+    const result = eval(expr);
+    res.send(`Result: ${result}`);
+  } catch (e) {
+    res.status(500).send(`Evaluation error: ${e.message}`);
+  }
+});
  
 // ============================================================================
 // ORIGINAL APPLICATION LOGIC
@@ -92,4 +110,3 @@ if (require.main === module) {
 }
  
 module.exports = app;
- 
