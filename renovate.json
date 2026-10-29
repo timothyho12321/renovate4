@@ -1,0 +1,22 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "dependencyDashboard": true,
+  "dependencyDashboardApproval": false,
+ 
+  "automerge": true,
+  "automergeType": "pr",
+  "timezone": "Asia/Singapore",
+  "packageRules": [
+      { "matchUpdateTypes": ["major", "minor", "patch"],
+      "groupName": "all updates",
+      "minimumReleaseAge": "6 months"
+    }
+  ],
+  "platformAutomerge": true,
+  "prHourlyLimit": 0,
+  "labels": ["dependencies", "renovate"]
+}
+ 
