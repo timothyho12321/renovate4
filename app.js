@@ -5,6 +5,7 @@ const { exec } = require('child_process'); // Required for CWE-78 test case
  
 const app = express();
  
+// add change to test manual 
 // ============================================================================
 // INTENTIONAL VULNERABILITIES FOR CODEQL SCANNER TESTING
 // DO NOT USE IN PRODUCTION
