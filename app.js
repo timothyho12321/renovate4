@@ -1,7 +1,7 @@
 const express = require('express');
 const _ = require('lodash');
 const dayjs = require('dayjs');
-const { exec } = require('child_process'); // Required for CWE-78 test case
+const { execFile } = require('child_process'); // Safer than exec: avoids shell interpolation
  
 const app = express();
  
@@ -15,13 +15,18 @@ const app = express();
 // CodeQL should flag this: Untrusted 'req.query.target' flows into 'exec'
 app.get('/ping', (req, res) => {
   const target = req.query.target;
- 
+
   if (!target) {
     return res.status(400).send('Missing target parameter');
   }
- 
-  // VULNERABILITY: Untrusted input concatenated directly into shell command
-  exec('ping -c 4 ' + target, (err, stdout, stderr) => {
+
+  // Validate target to allow only hostname/IP-safe characters
+  if (!/^[a-zA-Z0-9.-]+$/.test(target)) {
+    return res.status(400).send('Invalid target parameter');
+  }
+
+  // Use execFile with argument array to avoid shell command injection
+  execFile('ping', ['-c', '4', target], (err, stdout, stderr) => {
     if (err) {
       return res.status(500).send(`Error: ${stderr || err.message}`);
     }
